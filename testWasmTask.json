@@ -1,0 +1,8 @@
+{
+    "minDeposit": "1",
+    "codeType": "WAST",
+    "storageType": "BLOCKCHAIN",
+    "codeFile": "/data/factorial.wast",
+    "reward": "1",
+    "maxDifficulty": "1"
+}

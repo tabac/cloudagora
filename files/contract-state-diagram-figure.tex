@@ -1,0 +1,87 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes,automata,petri,positioning,calc}
+
+\tikzset{
+<<<<<<< HEAD
+    state/.style={
+        circle,
+        thick,
+        draw=black!75,
+=======
+    place/.style={
+        circle,
+        thick,
+        draw=black,
+        fill=gray!50,
+        minimum size=6mm,
+    },
+        state/.style={
+        circle,
+        thick,
+        draw=blue!75,
+>>>>>>> state transition tex files.
+        fill=blue!20,
+        minimum size=6mm,
+    },
+}
+
+\begin{document}
+<<<<<<< HEAD
+=======
+
+>>>>>>> state transition tex files.
+\begin{tikzpicture}[node distance=2cm and 1cm,>=stealth',auto, every place/.style={draw}]
+    \node[state] (A) {Created};
+
+    \coordinate[node distance=2.1cm,above of=A] (above-A);
+    \coordinate[node distance=3.1cm,left of=A] (left-A);
+
+    \node [state] (B) [node distance=1.1cm,below=of left-A] {Cancelled};    
+
+    \node [state] (C) [node distance=3.7cm,below of=A] {Active};    
+
+    \coordinate[node distance=3.1cm,left of=C] (left-C);
+    \coordinate[node distance=2.1cm,right of=C] (right-C);
+
+    \node [state] (D) [node distance=2.1cm,below of=left-C] {Challenged};    
+
+    \node [state] (E) [node distance=2.1cm,below of=right-C] {Complete};    
+
+    \node [state] (F) [node distance=4.1cm,below of=C] {Invalid};    
+
+<<<<<<< HEAD
+    \draw[->, black, thick] (above-A) -- (A) node[right,midway] {$t_0$};
+
+    \path[->, black] (A) edge node {$t_1$} (B);
+
+    \path[->, black, dashed] (A) edge node {$t_2$} (C);
+
+    \path[->, black] (C) edge [bend left] node {$t_3$} (D);
+
+    \path[->, black, dashed] (D) edge [bend left] node {$t_4$} (C);
+
+    \path[->, black] (D) edge node {$t_5$} (F);
+
+    \path[->, black] (C) edge node {$t_6$} (F);
+
+    \path[->, black, dashed] (C) edge node {$t_7$} (E);
+=======
+    \draw[->, thick] (above-A) -- (A) node[right,midway] {$t_0$};
+
+    \path[->] (A) edge node {$t_1$} (B);
+
+    \path[->] (A) edge node {$t_2$} (C);
+
+    \path[->] (C) edge [bend left] node {$t_3$} (D);
+
+    \path[->] (D) edge [bend left] node {$t_4$} (C);
+
+    \path[->] (D) edge node {$t_5$} (F);
+
+    \path[->] (C) edge node {$t_6$} (F);
+
+    \path[->] (C) edge node {$t_7$} (E);
+>>>>>>> state transition tex files.
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,55 @@
++------------------------------------------------------------------------------+
+| Design - Architecture Related Topics.                                        |
++------------------------------------------------------------------------------+
+
+- Proof-of-Retrievability Scheme.
+
+    The scheme is the following (normal behavior):
+
+        - The file is encoded in an erasure code format. From this point we
+          refer to the file and assume the encoded.
+
+        - The client creates a contract that contains the Merkle tree root of
+          the file, Merkle tree height and number of leaves (possibly).
+
+        - The provider contacts the client off-chain, receives the file checks
+          the Merkle Tree root and height and accepts the contract.
+
+        - At some point the contract ends, there is a period of time that
+          the client can download his file. The client downloads the file
+          checks its validity and confirms the contract. At this point the
+          provider is paid and his guarantee is released.
+
+    The scheme has the following edges (abnormal behavior):
+
+        - The provider throws the file away, or keeps a part of it. 
+        
+          In that case the client receives a file that he does not recognize
+          and does not confirm the contract.  As a result the client receives
+          his payment and guarantee.
+
+        - The client pretends that the file is corrupted. 
+        
+          In that case the provider can release himself from the contract by
+          providing to the contract a large number of Merkle tree proofs. 
+          
+          These proofs in combination with the file being erasure encoded
+          guarantee that the provider still has the file. 
+          
+          Consequently, the provider should receive his guarantee and the
+          client's payment. This should incentivize the clients to have a
+          legitimate behavior.
+
+    Implementation specifics:
+
+        - A library can be used to verify that a Merkle tree proof is correct.
+          This can have low to no cost if the function is `pure`.
+
+        - A dict can be used to verify that the leaves that the provider,
+          provides are unique. 
+
+        - The Merkle tree height can be used to verify that a given leaf is
+          indead a leaf of the Merkle tree.
+
+        - The Merkle tree root in combination with the Merkle tree can verify
+          that the given leaf is part of the file.

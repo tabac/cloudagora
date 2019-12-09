@@ -1,0 +1,325 @@
+<div *ngIf="contract">
+  <div class="animated fadeIn">
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">Actions</div>
+          <div class="card-body">
+            <div class="row">
+              <div class="w-100">
+                <tabset>
+                  <tab *ngIf="!hasClientRole()" heading="Activate Contract" id="tab1">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                              <div class="alert alert-info" role="alert">
+                                By activating a contract the provider pledges to keep the file for at least the duration of the contract.
+                              </div>
+                            </div>
+                            <div class="row" style="margin-top: 1em">
+                              <button type="button" class="btn btn-primary float-left" (click)="activateContract()" [disabled]="!isActivateContractEnabled()"> Activate Contract </button>
+                              <mat-progress-spinner *ngIf="activating" diameter=20 mode="indeterminate" color="primary" style="margin-left: 1em" ></mat-progress-spinner>
+                              <div *ngIf="activateSuccessMessage !== ''" style="margin-left: 2em">
+                                <div class="alert alert-success" role="alert">
+                                  {{ activateSuccessMessage }}
+                                </div>
+                              </div>
+                              <div *ngIf="activateErrorMessage !== ''" style="margin-left: 2em">
+                                <div class="alert alert-danger" role="alert">
+                                  {{ activateErrorMessage }}
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                  </tab>
+                  <tab *ngIf="!hasClientRole()" heading="Run Task" id="tab1">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                              <div class="alert alert-info" role="alert">
+                                Triggers actual code execution.
+                              </div>
+                            </div>
+                            <div class="row" style="margin-top: 1em">
+                              <button type="button" class="btn btn-primary float-left" (click)="runCode()" [disabled]="!isRunCodeEnabled()"> Run </button>
+                              <mat-progress-spinner *ngIf="activating" diameter=20 mode="indeterminate" color="primary" style="margin-left: 1em" ></mat-progress-spinner>
+                              <div *ngIf="runSuccessMessage !== ''" style="margin-left: 2em">
+                                <div class="alert alert-success" role="alert">
+                                  {{ runSuccessMessage }}
+                                </div>
+                              </div>
+                              <div *ngIf="runErrorMessage !== ''" style="margin-left: 2em">
+                                <div class="alert alert-danger" role="alert">
+                                  {{ runErrorMessage }}
+                                </div>
+                              </div>
+
+                            </div>
+                        </div>
+                    </div>
+                  </tab>
+                  <tab *ngIf="!hasClientRole()" heading="Complete Contract" id="tab1">
+                    <div class="card">
+                        <div class="card-body">
+                              <div class="row">
+                                <div class="alert alert-info" role="alert">
+                                  By completing a contract the provider receives its payment for keeping the file for the duration of the contract.
+                                </div>
+                              </div>
+                              <div class="row" style="margin-top: 1em">
+                                <button type="button" class="btn btn-primary float-left" (click)="completeContract()" [disabled]="!isCompleteContractEnabled()"> Comlete Contract </button>
+                                <mat-progress-spinner *ngIf="completing" diameter=20 mode="indeterminate" color="primary" style="margin-left: 1em" ></mat-progress-spinner>
+                                <div *ngIf="completeSuccessMessage !== ''" style="margin-left: 2em">
+                                  <div class="alert alert-success" role="alert">
+                                    {{ completeSuccessMessage }}
+                                  </div>
+                                </div>
+                                <div *ngIf="completeErrorMessage !== ''" style="margin-left: 2em">
+                                  <div class="alert alert-danger" role="alert">
+                                    {{ completeErrorMessage }}
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                  </tab>
+		  <!--
+                  <tab *ngIf="hasClientRole()" heading="Challenge Provider">
+                    <div class="card">
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="alert alert-info" role="alert">
+                            The client can challenge the provider to prove that he still has the file at its possession.
+                          </div>
+                        </div>
+                        <div class="row" style="margin-top: 1em">
+                          <br/>
+                          <br/>
+                          <button type="button" class="btn btn-primary float-left" (click)="challengeContract()" [disabled]="!isChallengeContractEnabled()"> Challenge contract </button>
+                          <mat-progress-spinner *ngIf="challenging" diameter=20 mode="indeterminate" color="primary" style="margin-left: 1em" ></mat-progress-spinner>
+                          <div *ngIf="challengeSuccessMessage !== ''" style="margin-left: 2em">
+                            <div class="alert alert-success" role="alert">
+                              {{ challengeSuccessMessage }}
+                            </div>
+                          </div>
+                          <div *ngIf="challengeErrorMessage !== ''" style="margin-left: 2em">
+                            <div class="alert alert-danger" role="alert">
+                              {{ challengeErrorMessage }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </tab>
+                  -->
+                  <tab *ngIf="hasClientRole()" heading="Upload File">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                              <div class="alert alert-info" role="alert">
+                                Uploading a file to the provider is required for the activation of the contract by the provider.
+                              </div>
+                            </div>
+                            <div class="row" style="margin-top: 1em">
+                              <div class="form-group">
+                                <label for="uploadFilepath">Choose Task to Upload</label>
+                                <input type="file" (change)="setFileToUpload($event.target.files)" class="form-control-file" id="uploadFilepath" [disabled]="!isUploadTaskEnabled()">
+                              </div>
+                            </div>
+                            <div class="row">
+                              <button class="btn btn-primary" type="button" (click)="uploadTask()"  [disabled]="!isUploadTaskEnabled()">Upload Task</button>
+                              <mat-progress-spinner *ngIf="taskUploading" diameter=20 mode="indeterminate" color="primary" style="margin-left: 1em" ></mat-progress-spinner>
+                              <div *ngIf="taskUploadSuccessMessage !== ''" style="margin-left: 2em">
+                                <div class="alert alert-success" role="alert">
+                                  {{ taskUploadSuccessMessage }}
+                                </div>
+                              </div>
+                              <div *ngIf="taskUploadErrorMessage !== ''" style="margin-left: 2em">
+                                <div class="alert alert-danger" role="alert">
+                                  {{ taskUploadErrorMessage }}
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                  </tab>
+                  <tab *ngIf="hasClientRole()" heading="Cancel Contract">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                              <div class="alert alert-info" role="alert">
+                                By cancelling the contract the client is refunded the payment amount.
+                                This action is only possible in the case the provider has not yet activated
+                                the contract.
+                              </div>
+                            </div>
+                            <div class="row" style="margin-top: 1em">
+                              <button type="button" class="btn btn-primary float-left" (click)="cancelContract()" [disabled]="!isCancelContractEnabled()"> Cancel Contract </button>
+                              <mat-progress-spinner *ngIf="canceling" diameter=20 mode="indeterminate" color="primary" style="margin-left: 1em" ></mat-progress-spinner>
+                              <div *ngIf="cancelSuccessMessage !== ''" style="margin-left: 2em">
+                                <div class="alert alert-success" role="alert">
+                                  {{ cancelSuccessMessage }}
+                                </div>
+                              </div>
+                              <div *ngIf="cancelErrorMessage !== ''" style="margin-left: 2em">
+                                <div class="alert alert-danger" role="alert">
+                                  {{ cancelErrorMessage }}
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                  </tab>
+                  <tab *ngIf="hasClientRole()" heading="Invalidate Contract">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                              <div class="alert alert-info" role="alert">
+                                In the case the contract has not been completed by the provider and the contract's end date and grace period have passed the client can invalidate the contract.
+                                That way he is refunded his payment.
+                              </div>
+                            </div>
+                            <div class="row" style="margin-top: 1em">
+                              <button type="button" class="btn btn-primary float-left" (click)="invalidateContract()" [disabled]="!isInvalidateContractEnabled()"> Invalidate Contract </button>
+                              <mat-progress-spinner *ngIf="invalidating" diameter=20 mode="indeterminate" color="primary" style="margin-left: 1em" ></mat-progress-spinner>
+                              <div *ngIf="invalidateSuccessMessage !== ''" style="margin-left: 2em">
+                                <div class="alert alert-success" role="alert">
+                                  {{ invalidateSuccessMessage }}
+                                </div>
+                              </div>
+                              <div *ngIf="invalidateErrorMessage !== ''" style="margin-left: 2em">
+                                <div class="alert alert-danger" role="alert">
+                                  {{ invalidateErrorMessage }}
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                  </tab>
+                </tabset>
+              </div>
+            </div>
+          </div>
+        </div><!--/.card-->
+      </div><!--/.col-->
+    </div><!--/.row-->
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">Contract Details</div>
+          <div class="card-body">
+            <div class="row">
+            <br>
+            <table class="table table-responsive-sm table-hover table-outline mb-0">
+              <tbody>
+              <tr>
+                <td class="text-left" style="width: 50%">Address:</td>
+                <td> {{ contract.address }} </td>
+              </tr>
+              <tr>
+                <td class="text-left">Creation Date:</td>
+                <td> {{ contract.createDate | date }} </td>
+              </tr>
+              <tr>
+                <td class="text-left">Duration: </td>
+                <td> {{ getDuration(contract.details) }} (days)</td>
+              </tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div><!--/.card-->
+      </div><!--/.col-->
+
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">Contract Status</div>
+          <div class="card-body">
+            <div class="row">
+            <br>
+            <table class="table table-responsive-sm table-hover table-outline mb-0">
+              <tbody>
+              <tr>
+                <td class="text-left" style="width: 50%">Status:</td>
+                <td [ngClass]="getStatusColor(contract.details)">{{ contract.details.status }}</td>
+              </tr>
+              <tr>
+                <td class="text-left">Activate Date: </td>
+                <td>
+                  <span *ngIf="contract.details.activateDate !== 0"> {{ contract.details.activateDate | date }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-left">End Date: </td>
+                <td>
+                  <span *ngIf="contract.details.endDate !== 0">{{ contract.details.endDate | date }}</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div><!--/.card-->
+      </div><!--/.col-->
+    </div><!--/.row-->
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">Provider Details</div>
+          <div class="card-body">
+            <div class="row">
+            <br>
+            <table class="table table-responsive-sm table-hover table-outline mb-0">
+              <tbody>
+              <tr>
+                <td class="text-left" style="width: 50%">Address:</td>
+                <td> {{ contract.details.provider }} </td>
+              </tr>
+              <tr>
+                <td class="text-left">Payment:</td>
+                <td> {{ contract.details.payment }} </td>
+              </tr>
+              <tr>
+                <td class="text-left">Guarantee:</td>
+                <td> {{ contract.details.guarantee }} </td>
+              </tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div><!--/.card-->
+      </div><!--/.col-->
+
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">File Details</div>
+          <div class="card-body">
+            <div class="row">
+            <br>
+            <table class="table table-responsive-sm table-hover table-outline mb-0">
+              <tbody>
+              <tr>
+                <td class="text-left" style="width: 50%">Name:</td>
+                <td>
+                  {{ contract.localFilename }}
+                  <span class="badge badge-success" *ngIf="isTaskUploaded()">Uploaded</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-left">Gas:</td>
+                <td> {{ contract.gas }} </td>
+              </tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div><!--/.card-->
+      </div><!--/.col-->
+    </div><!--/.row-->
+
+  </div>
+</div>

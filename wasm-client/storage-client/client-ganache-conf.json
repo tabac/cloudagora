@@ -1,0 +1,9 @@
+{
+  "url": "http://127.0.0.1:7545",
+  "accounts": ["0x296F8CA025e2127c964513Bc9c809B79e6954D58"],
+  "passwords": [""],
+  "contract": {
+    "abi": "../contracts/store-contract.abi",
+    "bytecode": "../contracts/store-contract.bin"
+  }
+}

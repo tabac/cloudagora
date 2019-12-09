@@ -1,0 +1,29 @@
+<div *ngIf="registry !== undefined && registry.length != 0">
+    <div class="animated fadeIn">
+    <div class="row">
+        <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+            Registry
+            </div>
+            <div class="card-body">
+            <table class="table table-responsive-sm table-hover table-outline mb-0">
+                <thead>
+                  <td>Provider Address:</td>
+                  <td>Provider Uploads Endpoint:</td>
+                  <td>Provider Challenge Endpoint:</td>
+                </thead>
+                <tbody>
+                <tr *ngFor="let entry of registry">
+                  <td class="text-left" style="width: 40%">{{ entry.address }}</td>
+                  <td>{{ entry.endpoint }}</td>
+                  <td>{{ entry.challenge }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div><!-- card-body-->
+        </div><!-- card -->
+        </div><!--/.col-->
+    </div><!--/.row-->
+    </div>
+</div>

@@ -1,0 +1,25 @@
+{
+  "name": "zxcli",
+  "version": "0.0.7",
+  "description": "An ethereum based storage service agent.",
+  "main": "zxcli",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "abk@cslab.ece.ntua.gr",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@koa/router": "^8.0.1",
+    "chalk": "^2.4.1",
+    "commander": "^2.19.0",
+    "form-data": "^2.5.1",
+    "keccak": "^2.0.0",
+    "koa": "^2.7.0",
+    "koa-body": "^4.1.1",
+    "koa-route": "^3.2.0",
+    "merkletreejs": "0.0.18",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7",
+    "web3": "^1.0.0-beta.36"
+  }
+}

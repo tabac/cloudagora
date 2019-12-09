@@ -1,0 +1,141 @@
+<div *ngIf="auction">
+    <div class="animated fadeIn">
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">Actions</div>
+          <div class="card-body">
+            <div class="row">
+              <div class="w-100">
+                <tabset>
+                  <tab heading="Place Offer" id="tab1">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                              <div class="alert alert-info" role="alert">
+                                This is to place a better offer for the auction.
+                              </div>
+                            </div>
+                            <div class="row" style="margin-top: 1em">
+                              <label for="offer">Specify a new offer (in Wei)</label>
+                              <input type="text" name="offer" (change)="setOffer($event.target.value)">
+                              <button type="button" class="btn btn-primary float-left" (click)="placeOffer()">Place Offer </button>
+                              <mat-progress-spinner *ngIf="bidding" diameter=20 mode="indeterminate" color="primary" style="margin-left: 1em" ></mat-progress-spinner>
+                              <div *ngIf="bidSuccessMessage !== ''" style="margin-left: 2em">
+                                <div class="alert alert-success" role="alert">
+                                  {{ bidSuccessMessage }}
+                                </div>
+                              </div>
+                              <div *ngIf="bidErrorMessage !== ''" style="margin-left: 2em">
+                                <div class="alert alert-danger" role="alert">
+                                  {{ bidErrorMessage }}
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                  </tab>
+                  <tab heading="Finalize Auction" id="tab1">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                              <div class="alert alert-info" role="alert">
+                                This is to finalize the auction.
+                              </div>
+                            </div>
+                            <div class="row" style="margin-top: 1em">
+                              <div *ngIf="!auction.isCompute" class="form-group">
+                                <label for="uploadFilepath">Choose File to Upload</label>
+                                <input type="file" (change)="setFinalizeFile($event.target.files)" class="form-control-file" id="uploadFilepath">
+                              </div>
+
+                              <button type="button" class="btn btn-primary float-left" (click)="finalize()">Finalize Auction </button>
+                              <mat-progress-spinner *ngIf="finalizing" diameter=20 mode="indeterminate" color="primary" style="margin-left: 1em" ></mat-progress-spinner>
+                              <div *ngIf="finalizeSuccessMessage !== ''" style="margin-left: 2em">
+                                <div class="alert alert-success" role="alert">
+                                  {{ finalizeSuccessMessage }}
+                                </div>
+                              </div>
+                              <div *ngIf="finalizeErrorMessage !== ''" style="margin-left: 2em">
+                                <div class="alert alert-danger" role="alert">
+                                  {{ finalizeErrorMessage }}
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                  </tab>
+
+                </tabset>
+              </div><!-- w-100 -->
+            </div><!-- row -->
+          </div><!-- card-body-->
+        </div><!-- card -->
+      </div><!--/.col-->
+    </div><!--/.row-->
+
+
+
+    <div class="row">
+        <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+            Auction Details
+            </div>
+            <div class="card-body">
+            <table class="table table-responsive-sm table-hover table-outline mb-0">
+                <tbody>
+                <tr>
+                  <td class="text-left" style="width: 10em">Address: </td>
+                  <td><div>{{ auction.address }}</div></td>
+                </tr>
+                <tr>
+                  <td class="text-left" style="width: 10em">Type: </td>
+                  <td *ngIf="auction.isCompute" class="text-danger">Compute</td>
+                  <td *ngIf="!auction.isCompute" class="text-success">Storage</td>
+                </tr>
+                <tr>
+                  <td class="text-left" style="width: 10em">Owner Address: </td>
+                  <td>{{ auction.owner }}</td>
+                </tr>
+
+                <tr>
+                  <td class="text-left" style="width: 10em">Auction Start DateTime: </td>
+                  <td>{{ auction.startTime | date:'medium' }}</td>
+                </tr>
+                <tr>
+                  <td class="text-left" style="width: 10em">Auction End DateTime: </td>
+                  <td *ngIf="auction.endTime != 0">{{ auction.endTime | date:'medium' }}</td>
+                  <td *ngIf="auction.endTime == 0">-</td>
+                </tr>
+                <tr>
+                  <td class="text-left" style="width: 10em">Contract Duration: </td>
+                  <td>{{ getDurationInDays(auction.duration) }} (days) </td>
+                </tr>
+                <tr>
+                  <td class="text-left" style="width: 10em">Contract Address: </td>
+                  <td *ngIf="auction.contract">{{ auction.contract }}</td>
+                  <td *ngIf="!auction.contract">-</td>
+                </tr>
+                <tr>
+                  <td class="text-left" style="width: 10em">Auction Status: </td>
+                  <td [ngClass]="getAuctionStatusColor()">{{ getAuctionStatus() }}</td>
+                </tr>
+                <tr>
+                  <td class="text-left" style="width: 10em">Best Offer: </td>
+                  <td>{{ auction.lowestOffer }} wei</td>
+                </tr>
+                <tr>
+                  <td class="text-left" style="width: 10em">Auction Winner: </td>
+                  <td *ngIf="auction.winner">{{ auction.winner }}</td>
+                  <td *ngIf="!auction.winner">-</td>
+                </tr>
+                </tbody>
+            </table>
+        </div><!-- card-body-->
+        </div><!-- card -->
+        </div><!--/.col-->
+    </div><!--/.row-->
+    </div>
+</div>

@@ -1,0 +1,14 @@
+{
+  "url": "http://127.0.0.1:8545",
+  "registry": "0x470Abd0398019ee7bF7539a960530e643E22c516",
+  "contractsRegistry": "0x17428b28304d8fA424cdEEadC534509Fa94F95B8",
+  "auctionFactory": "0x8480799E03b206f87fBEf914E9D4b383E8F07B09",
+  "accounts": ["0x3d69034486D7cf1Ad8b425C54574f3403b5210Bc"],
+  "passwords": [""],
+  "role": "provider",
+  "contract": {
+    "abi": "../contracts/StorageSupply.abi",
+    "bytecode": "../contracts/StorageSupply.bin"
+  },
+  "db": "./provider-db.json"
+}

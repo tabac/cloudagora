@@ -1,0 +1,237 @@
+<div class="animated fadeIn">
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">Actions</div>
+          <div class="card-body">
+            <div class="row">
+              <div class="w-100">
+                <tabset>
+                  <tab heading="Create New Auction" id="tab1">
+                    <div class="card">
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="alert alert-info" role="alert">
+                              This is to create a new auction
+                            </div>
+                          </div>
+
+
+                          <div class="row">
+                            <table class="table table-responsive-sm table-borderless mb-0">
+                                <tbody>
+                                <tr>
+                                  <td class="text-left" style="width: 20%">
+                                    Select Auction Type
+                                  </td>
+                                  <td>
+                                    <select class="form-control" id="auctionType" (change)="setAuctionType($event.target.value)">
+                                      <option>Storage</option>
+                                      <option>Compute</option>
+                                    </select>
+                                  </td>
+                                </tr>
+
+                                <tr>
+                                  <td class="text-left" style="width: 20%">
+                                    Specify Contract Duration (s)
+                                  </td>
+                                  <td>
+                                    <input type="text" name="duration" style="width: 100%" (change)="setDuration($event.target.value)">
+                                  </td>
+                                </tr>
+
+                                <tr>
+                                  <td class="text-left" style="width: 20%">
+                                    Specify File Size (bytes) or Gas used
+                                  </td>
+                                  <td>
+                                    <input type="text" name="filesizeOrGas" style="width: 100%" (change)="setFilesizeOrGas($event.target.value)">
+                                  </td>
+                                </tr>
+
+                                <tr>
+                                  <td class="text-left" style="width: 20%">
+                                  </td>
+                                  <td>
+                                    <button type="button" class="btn btn-primary float-left" (click)="createAuction()">Create Auction</button>
+
+                                    <mat-progress-spinner *ngIf="creating" diameter=20 mode="indeterminate" color="primary" style="margin-left: 1em" ></mat-progress-spinner>
+                                    <div *ngIf="createAuctionSuccessMessage !== ''" style="margin-left: 2em">
+                                      <div class="alert alert-success" role="alert">
+                                        {{ createAuctionSuccessMessage }}
+                                      </div>
+                                    </div>
+                                    <div *ngIf="createAuctionErrorMessage !== ''" style="margin-left: 2em">
+                                      <div class="alert alert-danger" role="alert">
+                                        {{ createAuctionErrorMessage }}
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div><!-- card-body -->
+                    </div><!-- card -->
+                  </tab>
+
+                </tabset>
+              </div><!-- w-100 -->
+            </div><!-- row -->
+          </div><!-- card-body-->
+        </div><!-- card -->
+      </div><!--/.col-->
+    </div><!--/.row-->
+
+
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          Storage Tasks
+        </div>
+
+        <!-- These are the storage auctions. -->
+
+        <div class="card-body">
+          <div *ngIf="storageAuctions !== undefined && storageAuctions.length != 0" class="row">
+          <br>
+          <table class="table table-responsive-sm table-hover table-outline mb-0">
+            <thead class="thead-light">
+              <tr>
+                <th class="text-center" style="width: 30%">Auction Address</th>
+                <th class="text-center" style="width: 30%">Auction Owner Address</th>
+                <th class="text-center" style="width: 20%">Timeline</th>
+                <th class="text-center" style="width: 20%">Best Offer</th>
+                <th class="text-center" style="width: 20%">Winner</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let auction of storageAuctions">
+                <td>
+                  <div class="text-center">
+                      <a routerLink="/auction-contract/{{ auction.address }}">
+                        {{ auction.address }}
+                      </a>
+                  </div>
+                </td>
+                <td>
+                  <div class="text-center"> {{ auction.owner }} </div>
+                </td>
+                <td>
+                  <div class="clearfix">
+                    <div class="float-left">
+                      <strong>{{ getTimelinePercentage(auction) }}%</strong>
+                    </div>
+                    <div class="float-right">
+                      <small class="text-muted">
+                          {{ auction.startTime | date}} - {{ auction.endTime | date}}
+                      </small>
+                    </div>
+                  </div>
+                  <div class="progress progress-xs">
+                    <div
+                        class="progress-bar bg-success"
+                        role="progressbar"
+                        [ngStyle]="getWidthStyle(auction)"
+                        [attr.aria-valuenow]="getTimelinePercentage(auction)"
+                        aria-valuemin="0"
+                        aria-valuemax="100"></div>
+                  </div>
+                </td>
+                <td class="text-center"> {{ auction.lowestOffer }} wei </td>
+                <td *ngIf="auction.winner" class="text-center"> {{ auction.winner }} </td>
+                <td *ngIf="!auction.winner" class="text-center"> - </td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          <br>
+          <br>
+
+          <!-- These are the compute auctions. -->
+
+      </div><!-- card-body-->
+    </div><!-- card -->
+    </div><!--/.col-->
+  </div><!--/.row-->
+
+
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          Compute Tasks 
+        </div>
+
+        <!-- These are the compute auctions. -->
+
+        <div class="card-body">
+          <div *ngIf="computeAuctions !== undefined && computeAuctions.length != 0" class="row">
+          <br>
+          <table class="table table-responsive-sm table-hover table-outline mb-0">
+            <thead class="thead-light">
+              <tr>
+                <th class="text-center" style="width: 30%">Auction Address</th>
+                <th class="text-center" style="width: 30%">Auction Owner Address</th>
+                <th class="text-center" style="width: 20%">Timeline</th>
+                <th class="text-center" style="width: 20%">Best Offer</th>
+                <th class="text-center" style="width: 20%">Winner</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let auction of computeAuctions">
+                <td>
+                  <div class="text-center">
+                      <a routerLink="/auction-contract/{{ auction.address }}">
+                        {{ auction.address }}
+                      </a>
+                  </div>
+                </td>
+                <td>
+                  <div class="text-center"> {{ auction.owner }} </div>
+                </td>
+                <td>
+                  <div class="clearfix">
+                    <div class="float-left">
+                      <strong>{{ getTimelinePercentage(auction) }}%</strong>
+                    </div>
+                    <div class="float-right">
+                      <small class="text-muted">
+                          {{ auction.startTime | date}} - {{ auction.endTime | date}}
+                      </small>
+                    </div>
+                  </div>
+                  <div class="progress progress-xs">
+                    <div
+                        class="progress-bar bg-success"
+                        role="progressbar"
+                        [ngStyle]="getWidthStyle(auction)"
+                        [attr.aria-valuenow]="getTimelinePercentage(auction)"
+                        aria-valuemin="0"
+                        aria-valuemax="100"></div>
+                  </div>
+                </td>
+                <td class="text-center"> {{ auction.lowestOffer }} wei </td>
+                <td *ngIf="auction.winner" class="text-center"> {{ auction.winner }} </td>
+                <td *ngIf="!auction.winner" class="text-center"> - </td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          <br>
+          <br>
+
+      </div><!-- card-body-->
+    </div><!-- card -->
+    </div><!--/.col-->
+  </div><!--/.row-->
+
+
+
+
+</div>

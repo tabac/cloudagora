@@ -1,0 +1,50 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          Settings
+        </div>
+        <div class="card-body">
+          <table class="table table-responsive-sm table-hover table-outline mb-0">
+            <tbody>
+            <tr>
+              <td class="text-left" style="width: 10em">Backend URL:</td>
+              <td> 
+                <input class="form-control" id="backendEndpoint" (keyup.enter)="saveEndpoint()" (change)="setEndpoint($event.target)" value="{{ endpoint }}">
+              </td>
+              <td> 
+                <button class="btn btn-primary" type="button" (click)="saveEndpoint()">Save</button>
+              </td>
+            </tr>
+	    <tr></tr>
+            <tr>
+              <td  class="text-left" style="width: 3em">
+		Verifier:  
+	     </td>
+	     <td>
+		<select class="form-control" id="verifierEnabled" (change)="notifyVerifier($event.target.value)">
+	          <option selected="selected" value="0">Disabled</option>
+		  <option value="1">Enabled</option>
+		</select>
+	     </td>
+	     <td>
+                <div *ngIf="verifierActivateSuccessMessage !== ''" style="margin-left: 2em">
+                  <div class="alert alert-success" role="alert">
+                    {{ verifierActivateSuccessMessage }}
+                  </div>
+                </div>
+                <div *ngIf="verifierActivateErrorMessage !== ''" style="margin-left: 2em">
+                  <div class="alert alert-danger" role="alert">
+                    {{ verifierActivateErrorMessage }}
+                  </div>
+                </div>
+             </td>
+            </tr>
+            </tbody>
+          </table>
+      </div><!-- card-body-->
+    </div><!-- card -->
+    </div><!--/.col-->
+  </div><!--/.row-->
+</div>

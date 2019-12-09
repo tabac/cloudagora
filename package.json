@@ -1,0 +1,41 @@
+{
+  "name": "truebit-client",
+  "version": "1.0.0",
+  "description": "Client software for interacting with the Truebit system",
+  "main": "index.js",
+  "scripts": {
+    "fixperms": "chmod 755 wasm-client/install.sh compile.sh",
+    "deps": "./wasm-client/install.sh",
+    "compile": "./compile.sh",
+    "deploy": "node deploy.js",
+    "test": "mocha",
+    "truebit": "node ./cli/index.js",
+    "coverage": "nyc mocha"
+  },
+  "keywords": [
+    "to",
+    "the",
+    "moon"
+  ],
+  "author": "hswick",
+  "license": "ISC",
+  "dependencies": {
+    "big-integer": "^1.6.42",
+    "bignumber.js": "^6.0.0",
+    "chalk": "^2.4.1",
+    "clear": "^0.1.0",
+    "ethereumjs-util": "^5.2.0",
+    "figlet": "^1.2.0",
+    "ipfs-api": "^14.3.7",
+    "minimist": "^1.2.0",
+    "mocha": "^5.2.0",
+    "npm": "^6.4.1",
+    "nyc": "^13.1.0",
+    "truffle-contract": "^3.0.5",
+    "vorpal": "^1.12.0",
+    "wasm-metering-tb": "^0.2.1",
+    "web3": "1.0.0-beta.34",
+    "websocket": "^1.0.26",
+    "winston": "^3.0.0"
+  }
+}

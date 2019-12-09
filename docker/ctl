@@ -1,0 +1,175 @@
+#!/bin/bash
+
+
+ETH_NODE_DOCKERFILE="Dockerfile"
+
+ETH_IMAGE_TAG="zx-ethereum:v1.8.17"
+
+ETH_NETWORK="zx-eth-network"
+
+ETH_RPCPORT=8098
+
+ETH_BOOTNODE_CONTAINER="zx-eth-bootnode-0"
+
+ETH_NODE_NAME_PREFIX="zx-eth-node"
+
+ETH_ACCOUNT_COUNT=12
+
+
+################################################################################
+# Helper functions. ############################################################
+################################################################################
+
+function bootnode_enode_url {
+    BOOTNODE_IP="$(docker inspect \
+                       --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
+                       $ETH_BOOTNODE_CONTAINER)"
+
+    if [ "$BOOTNODE_IP" != "" ]
+    then
+        BOOTNODE_ENODE_URL="$(docker logs \
+                                  $ETH_BOOTNODE_CONTAINER 2>&1 | grep -o -e 'enode://.*')"
+
+        echo "${BOOTNODE_ENODE_URL/\[\:\:\]/$BOOTNODE_IP}"
+    else
+        echo ""
+    fi
+}
+
+
+
+if [ "$1" == "build" ]
+then
+    ############################################################################
+    # Create network, if it does not exist. ####################################
+    ############################################################################
+    ETH_NETWORK_ID="$(docker network list \
+                          --filter name="$ETH_NETWORK" \
+                          --quiet)"
+
+    if [ "$ETH_NETWORK_ID" == "" ]
+    then
+        echo "Creating zx networks..."
+
+        docker network create --driver bridge "$ETH_NETWORK"
+    fi
+
+
+
+    ############################################################################
+    # Build image, anyways... ##################################################
+    ############################################################################
+
+    echo "Building eth node image..."
+
+    docker build \
+        --file "$ETH_NODE_DOCKERFILE" \
+        --tag "$ETH_IMAGE_TAG" \
+        .
+fi
+
+
+################################################################################
+# Run containers. ##############################################################
+################################################################################
+
+if [ "$1" == "run" ]
+then
+    if [ "$2" == "bootnode" ]
+    then
+        docker run \
+            --detach \
+            --network "$ETH_NETWORK" \
+            --name "$ETH_BOOTNODE_CONTAINER" \
+            --hostname "$ETH_BOOTNODE_CONTAINER" \
+            "$ETH_IMAGE_TAG" \
+            run bootnode
+    fi
+
+    if [ "$2" == "nodes" ]
+    then
+        if [ $3 -ge $ETH_ACCOUNT_COUNT ]
+        then
+            echo "ERROR: The number of nodes is greater than the existing accounts."
+            exit
+        fi
+
+        BOOTNODE_ENODE_URL="$(bootnode_enode_url)"
+
+        if [ "$BOOTNODE_ENODE_URL" == "" ]
+        then
+            echo "ERROR: A bootnode is required in this setup."
+            exit
+        fi
+
+        NODE_COUNT=$(($3 - 1))
+        for i in $(seq 0 $NODE_COUNT)
+        do
+            CONTROL_ARGS="run node $BOOTNODE_ENODE_URL $i"
+
+            ETH_PUBLISHED_RPCPORT=$(($ETH_RPCPORT + i))
+
+            docker run \
+                --detach \
+                --network "$ETH_NETWORK" \
+                --name "$ETH_NODE_NAME_PREFIX-$i" \
+                --hostname "$ETH_NODE_NAME_PREFIX-$i" \
+                --publish 127.0.0.1:$ETH_PUBLISHED_RPCPORT:$ETH_RPCPORT \
+                "$ETH_IMAGE_TAG" \
+                $CONTROL_ARGS
+        done
+    fi
+fi
+
+
+################################################################################
+# Helpers. #####################################################################
+################################################################################
+
+if [ "$1" == "help" ] || [ "$1" == "--help" ]
+then
+    echo "Usage: ctl [command] [options]"
+    echo ""
+    echo "    0) Build image:      ./ctl build"
+    echo "    1) Run bootnode:     ./ctl run bootnode"
+    echo "    2) Run geth node:    ./ctl run nodes <num_of_nodes>"
+    echo "    3) Start-all:        ./ctl startall <num_of_nodes>"
+    echo "    4) Stop-all:         ./ctl stopall <num_of_nodes>"
+    echo "    5) Get bootnode URL: ./ctl inspect bootnode"
+fi
+
+if [ "$1" == "stopall" ]
+then
+    for i in $(seq 0 "$2")
+    do
+        echo "Stopping eth node $i ..."
+
+        docker stop "$ETH_NODE_NAME_PREFIX-$i"
+    done
+
+    echo "Stopping eth bootnode ..."
+
+    docker stop "$ETH_BOOTNODE_CONTAINER"
+fi
+
+if [ "$1" == "startall" ]
+then
+    echo "Starting eth bootnode ..."
+
+    docker start "$ETH_BOOTNODE_CONTAINER"
+
+    for i in $(seq 0 "$2")
+    do
+        echo "Starting eth node $i ..."
+
+        docker start "$ETH_NODE_NAME_PREFIX-$i"
+    done
+fi
+
+if [ "$1" == "inspect" ]
+then
+    if [ "$2" == "bootnode" ]
+    then
+        echo "bootnode enode URL: $(bootnode_enode_url)"
+    fi
+fi
